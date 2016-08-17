@@ -47,10 +47,7 @@ const config = {
     'babel-polyfill',
     'history',
     'react',
-    'react-redux',
     'react-router',
-    'react-router-redux',
-    'redux'
   ],
 
   // ----------------------------------

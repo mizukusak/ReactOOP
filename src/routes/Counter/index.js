@@ -1,6 +1,5 @@
-import { injectReducer } from '../../store/reducers'
 
-export default (store) => ({
+export default () => ({
   path: 'counter',
   /*  Async getComponent is only invoked when route matches   */
   getComponent (nextState, cb) {
@@ -11,9 +10,6 @@ export default (store) => ({
           dependencies for bundling   */
       const Counter = require('./containers/CounterContainer').default
       const reducer = require('./modules/counter').default
-
-      /*  Add the reducer to the store on key 'counter'  */
-      injectReducer(store, { key: 'counter', reducer })
 
       /*  Return getComponent   */
       cb(null, Counter)

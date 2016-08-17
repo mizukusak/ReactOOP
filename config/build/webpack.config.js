@@ -2,9 +2,10 @@ import webpack from 'webpack'
 import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import config from '../config'
+import config from '../../config'
 import _debug from 'debug'
 
+const path = require('path');
 const debug = _debug('app:webpack:config')
 const paths = config.utils_paths
 const {__DEV__, __PROD__, __TEST__} = config.globals
@@ -31,16 +32,23 @@ webpackConfig.entry = {
   app: __DEV__
     ? APP_ENTRY_PATHS.concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`)
     : APP_ENTRY_PATHS,
-  vendor: config.compiler_vendor
 }
 
 // ------------------------------------
 // Bundle Output
 // ------------------------------------
-webpackConfig.output = {
-  filename: `[name].[${config.compiler_hash_type}].js`,
-  path: paths.dist(),
-  publicPath: config.compiler_public_path
+if (__DEV__) {
+  webpackConfig.output = {
+    filename: `[name].bundle.js`,
+    path: paths.dist(),
+    publicPath: config.compiler_public_path
+  }
+} else {
+  webpackConfig.output = {
+    filename: `[name].[${config.compiler_hash_type}].js`,
+    path: paths.dist(),
+    publicPath: config.compiler_public_path
+  }
 }
 
 // ------------------------------------
@@ -57,6 +65,14 @@ webpackConfig.plugins = [
     minify: {
       collapseWhitespace: true
     }
+  }),
+  // Reference library
+  new webpack.DllReferencePlugin({
+    context: __dirname,
+    /**
+     * manifestファイルをロードして渡す
+     */
+    manifest: require(path.join(paths.dist(), 'vendor-manifest.json'))
   })
 ]
 
@@ -71,6 +87,7 @@ if (__DEV__) {
   webpackConfig.plugins.push(
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         unused: true,
@@ -82,13 +99,13 @@ if (__DEV__) {
 }
 
 // Don't split bundles during testing, since we only want import one bundle
-if (!__TEST__) {
-  webpackConfig.plugins.push(
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor']
-    })
-  )
-}
+// if (!__TEST__) {
+//   webpackConfig.plugins.push(
+//     new webpack.optimize.CommonsChunkPlugin({
+//       name: ['vendor'].reverse()
+//     })
+//   )
+// }
 
 // ------------------------------------
 // Pre-Loaders
@@ -167,49 +184,62 @@ if (isUsingCSSModules) {
     'localIdentName=[name]__[local]___[hash:base64:5]'
   ].join('&')
 
-  webpackConfig.module.loaders.push({
-    test: /\.scss$/,
-    include: cssModulesRegex,
-    loaders: [
-      'style',
-      cssModulesLoader,
-      'postcss',
-      'sass?sourceMap'
-    ]
-  })
-
-  webpackConfig.module.loaders.push({
-    test: /\.css$/,
-    include: cssModulesRegex,
-    loaders: [
-      'style',
-      cssModulesLoader,
-      'postcss'
-    ]
-  })
+  webpackConfig.module.loaders.push(
+    {
+      test: /\.scss$/,
+      include: cssModulesRegex,
+      loaders: [
+        'style',
+        cssModulesLoader,
+        'postcss',
+        'sass?sourceMap'
+      ]
+    },
+    {
+      test: /\.css$/,
+      include: cssModulesRegex,
+      loaders: [
+        'style',
+        cssModulesLoader,
+        'postcss'
+      ]
+    }
+  )
 }
 
 // Loaders for files that should not be treated as CSS modules.
 const excludeCSSModules = isUsingCSSModules ? cssModulesRegex : false
-webpackConfig.module.loaders.push({
-  test: /\.scss$/,
-  exclude: excludeCSSModules,
-  loaders: [
-    'style',
-    BASE_CSS_LOADER,
-    'postcss',
-    'sass?sourceMap'
-  ]
-})
-webpackConfig.module.loaders.push({
-  test: /\.css$/,
-  exclude: excludeCSSModules,
-  loaders: [
-    'style',
-    BASE_CSS_LOADER,
-    'postcss'
-  ]
-})
+webpackConfig.module.loaders.push(
+  {
+    test: /\.styl$/,
+    exclude: excludeCSSModules,
+    loaders: [
+      'style',
+      BASE_CSS_LOADER,
+      'postcss',
+      'stylus?sourceMap'
+    ]
+  },
+  {
+    test: /\.scss$/,
+    exclude: excludeCSSModules,
+    loaders: [
+      'style',
+      BASE_CSS_LOADER,
+      'postcss',
+      'sass?sourceMap'
+    ]
+  },
+  {
+    test: /\.css$/,
+    exclude: excludeCSSModules,
+    loaders: [
+      'style',
+      BASE_CSS_LOADER,
+      'postcss'
+    ]
+  }
+)
 
 // ------------------------------------
 // Style Configuration
