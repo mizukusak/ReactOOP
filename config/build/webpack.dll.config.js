@@ -9,7 +9,7 @@ module.exports = {
     vendor: config.compiler_vendor
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: paths.dist(),
     filename: '[name].dll.js',
     /**
      * output.library

@@ -1,9 +1,10 @@
-import webpack from 'webpack'
-import cssnano from 'cssnano'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import config from '../../config'
-import _debug from 'debug'
+import webpack from "webpack";
+import cssnano from "cssnano";
+import HappyPack from "happypack";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import ExtractTextPlugin from "extract-text-webpack-plugin";
+import config from "../../config";
+import _debug from "debug";
 
 const path = require('path');
 const debug = _debug('app:webpack:config')
@@ -13,6 +14,7 @@ const {__DEV__, __PROD__, __TEST__} = config.globals
 debug('Create configuration.')
 const webpackConfig = {
   name: 'client',
+  debug: true,
   target: 'web',
   devtool: config.compiler_devtool,
   resolve: {
@@ -69,11 +71,10 @@ webpackConfig.plugins = [
   // Reference library
   new webpack.DllReferencePlugin({
     context: __dirname,
-    /**
-     * manifestファイルをロードして渡す
-     */
+    // manifestファイルをロードして渡す
     manifest: require(path.join(paths.dist(), 'vendor-manifest.json'))
-  })
+  }),
+  new HappyPack({ id: "js", threads: 4,}),
 ]
 
 if (__DEV__) {
@@ -145,7 +146,8 @@ webpackConfig.module.loaders = [{
     cacheDirectory: true,
     plugins: ['transform-runtime'],
     presets: ['es2015', 'react', 'stage-0']
-  }
+  },
+  happy: { id: 'js' },
 },
 {
   test: /\.json$/,

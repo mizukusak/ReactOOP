@@ -1,15 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import createBrowserHistory from 'history/lib/createBrowserHistory'
-import { useRouterHistory } from 'react-router'
-import AppContainer from './containers/AppContainer'
 
-// ========================================================
-// Browser History Setup
-// ========================================================
-const browserHistory = useRouterHistory(createBrowserHistory)({
-  basename: __BASENAME__
-})
 
 // ========================================================
 // Render Setup
@@ -20,10 +11,7 @@ let render = () => {
   const routes = require('./routes/index').default()
 
   ReactDOM.render(
-    <AppContainer
-      history={browserHistory}
-      routes={routes}
-    />,
+    routes,
     MOUNT_NODE
   )
 }
