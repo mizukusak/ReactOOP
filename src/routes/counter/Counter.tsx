@@ -1,12 +1,13 @@
-import React from 'react'
-import classes from './Counter.scss'
+import * as React from 'react'
+import './Counter.scss'
+
 
 export const Counter = (props) => (
   <div>
-    <h2 className={classes.counterContainer}>
+    <h2 className="counterContainer">
       Counter:
       {' '}
-      <span className={classes['counter--green']}>
+      <span className="counter--green">
         {props.counter}
       </span>
     </h2>
@@ -19,5 +20,12 @@ export const Counter = (props) => (
     </button>
   </div>
 )
+
+// export interface HelloProps { compiler?: string; framework?: string; }
+// class Counter extends React.Component<HelloProps, {}> {
+//   render() {
+//     return <div>ffffff</div>
+//   }
+// }
 
 export default Counter

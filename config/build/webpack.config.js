@@ -2,6 +2,7 @@ import webpack from "webpack";
 import cssnano from "cssnano";
 import HappyPack from "happypack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import AddAssetHtmlPlugin from "add-asset-html-webpack-plugin";
 import ExtractTextPlugin from "extract-text-webpack-plugin";
 import config from "../../config";
 import _debug from "debug";
@@ -15,14 +16,23 @@ debug('Create configuration.')
 const webpackConfig = {
   name: 'client',
   debug: true,
-  target: 'web',
   devtool: config.compiler_devtool,
+  target: 'web',
   resolve: {
     root: paths.client(),
-    extensions: ['', '.js', '.jsx', '.json']
+    extensions: ['', '.js', '.ts', '.styl', '.jsx', '.tsx', '.json']
   },
   module: {}
 }
+
+if (__DEV__) {
+  webpackConfig.tslint = {
+    emitErrors: false,
+    failOnHint: false,
+    resourcePath: 'src'
+  }
+}
+
 // ------------------------------------
 // Entry Points
 // ------------------------------------
@@ -43,12 +53,14 @@ if (__DEV__) {
   webpackConfig.output = {
     filename: `[name].bundle.js`,
     path: paths.dist(),
+    library: 'vendor_library',
     publicPath: config.compiler_public_path
   }
 } else {
   webpackConfig.output = {
     filename: `[name].[${config.compiler_hash_type}].js`,
     path: paths.dist(),
+    library: 'vendor_library',
     publicPath: config.compiler_public_path
   }
 }
@@ -58,21 +70,27 @@ if (__DEV__) {
 // ------------------------------------
 webpackConfig.plugins = [
   new webpack.DefinePlugin(config.globals),
+  // Reference library
+  new webpack.DllReferencePlugin({
+    context: config.utils_paths.base(),
+    // manifestファイルをロードして渡す
+    manifest: require(path.join(paths.dist(), 'vendor-manifest.json'))
+  }),
   new HtmlWebpackPlugin({
     template: paths.client('index.html'),
     hash: false,
+    cache: true,
     favicon: paths.client('static/favicon.ico'),
     filename: 'index.html',
+    vendorFileName: 'vendor.dll.js',
     inject: 'body',
     minify: {
       collapseWhitespace: true
     }
   }),
-  // Reference library
-  new webpack.DllReferencePlugin({
-    context: __dirname,
-    // manifestファイルをロードして渡す
-    manifest: require(path.join(paths.dist(), 'vendor-manifest.json'))
+  new AddAssetHtmlPlugin({
+    filepath: path.join(paths.dist(), 'vendor.dll.js'),
+    includeSourcemap: __DEV__
   }),
   new HappyPack({ id: "js", threads: 4,}),
 ]
@@ -97,6 +115,11 @@ if (__DEV__) {
       }
     })
   )
+}
+
+webpackConfig.node = {
+  fs: "empty",
+  child_process: "empty",
 }
 
 // Don't split bundles during testing, since we only want import one bundle
@@ -138,21 +161,29 @@ webpackConfig.eslint = {
 // Loaders
 // ------------------------------------
 // JavaScript / JSON
-webpackConfig.module.loaders = [{
-  test: /\.(js|jsx)$/,
-  exclude: /node_modules/,
-  loader: 'babel',
-  query: {
-    cacheDirectory: true,
-    plugins: ['transform-runtime'],
-    presets: ['es2015', 'react', 'stage-0']
+
+webpackConfig.module.loaders = [
+  {
+    test: /\.(js|jsx)$/,
+    exclude: /node_modules/,
+    loader: 'babel',
+    query: {
+      cacheDirectory: true,
+      plugins: ['transform-runtime'],
+      presets: ['es2015', 'react', 'stage-0']
+    },
+    happy: { id: 'js' },
   },
-  happy: { id: 'js' },
-},
-{
-  test: /\.json$/,
-  loader: 'json'
-}]
+  {
+    test: /\.json$/,
+    loader: 'json'
+  },
+  {
+    test: /\.(ts|tsx)$/,
+    loaders: ['awesome-typescript-loader'],
+    exclude: [/\.(spec|e2e)\.ts$/]
+  },
+]
 
 // ------------------------------------
 // Style Loaders

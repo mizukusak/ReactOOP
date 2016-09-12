@@ -1,14 +1,22 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+// import * as config from "../config";
+// import Routes from "./routes";
+import createBrowserHistory from "history/lib/createBrowserHistory";
+import {useRouterHistory} from "react-router";
 
 // ========================================================
 // Render Setup
 // ========================================================
 const MOUNT_NODE = document.getElementById('root')
 
+// specify history type
+const browserHistory = useRouterHistory(createBrowserHistory)({
+  basename: __BASENAME__
+})
+
 let render = () => {
-  const routes = require('./routes/index').default()
+  const routes = require('./routes/index').default({history: browserHistory})
 
   ReactDOM.render(
     routes,

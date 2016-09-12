@@ -80,7 +80,7 @@ Changelog
 * Upgraded `redux-thunk` to `^2.0.0`
 
 ### Improvements
-* Added `index.js` files for blueprints for convenient imports
+* Added `index.ts` files for blueprints for convenient imports
 
 ### Fixes
 * Removed some `cssnano` options that caused potential conflicts with css modules
@@ -243,7 +243,7 @@ Changelog
 * Added `dotenv` (thanks [dougvk](https://github.com/dougvk))
 
 ### Improvements
-* Renamed application entry point from `index.js` -> `app.js` (clarifies intent and helps with coverage reports)
+* Renamed application entry point from `index.tsx` -> `app.js` (clarifies intent and helps with coverage reports)
 * Refactored sample counter constants and actions to their appropriate locations (thanks [kyleect](https://github.com/kyleect))
 * Devtools in `npm run dev:nw` now take up the full window (thanks [jhgg](https://github.com/jhgg))
 * Webpack no longer runs an eslint pre-loader (cleans up console messages while developing)
@@ -400,7 +400,7 @@ Changelog
 #### Improvements
 * All build-, server-, and client-related code is now ES6.
 * Significantly refactors how client and server webpack configs are built.
-* `reducers/index.js` now exports combined root reducer.
+* `reducers/index.ts` now exports combined root reducer.
 * Client application code now lives in `~/client` instead of `~/src` in order to conform to Redux standards.
 
 #### Fixes

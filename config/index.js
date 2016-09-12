@@ -33,6 +33,7 @@ const config = {
   // Compiler Configuration
   // ----------------------------------
   compiler_css_modules     : true,
+  // compiler_devtool         : 'cheap-module-source-map',
   compiler_devtool         : 'source-map',
   compiler_hash_type       : 'hash',
   compiler_fail_on_warning : false,
@@ -47,6 +48,7 @@ const config = {
     'babel-polyfill',
     'history',
     'react',
+    'react-dom',
     'react-router',
   ],
 

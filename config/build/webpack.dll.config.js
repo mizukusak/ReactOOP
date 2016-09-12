@@ -5,6 +5,16 @@ import config from "../../config";
 const paths = config.utils_paths
 
 module.exports = {
+  // name: 'client',
+  // debug: true,
+  devtool: config.compiler_devtool,
+  target: 'web',
+  // resolve: {
+  //   root: paths.client(),
+  //   extensions: ['', '.js', '.ts', '.styl', '.jsx', '.tsx', '.json']
+  // },
+  // module: {},
+
   entry: {
     vendor: config.compiler_vendor
   },
@@ -33,5 +43,5 @@ module.exports = {
        */
       name: '[name]_library'
     })
-  ]
+  ],
 };

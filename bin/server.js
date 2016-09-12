@@ -1,4 +1,4 @@
-import config from '../config'
+import config from '../config/index'
 import server from '../server/main'
 import _debug from 'debug'
 
