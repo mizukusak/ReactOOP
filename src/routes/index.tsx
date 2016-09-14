@@ -4,7 +4,9 @@ import * as React from "react";
 // import Counter from "./Counter/Counter";
 import {Router, Route, IndexRoute} from "react-router";
 import {CoreLayout} from "../layouts/CoreLayout";
-import {loadComponentAsync} from "../utility/router";
+import {loadComponentAsync} from "../reactOOP/utility/router";
+import {AppState} from "../common/model/AppState";
+import {ComponentState} from "../common/model/ComponentState";
 
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -15,13 +17,14 @@ import {loadComponentAsync} from "../utility/router";
 // ========================================================
 
 let load = loadComponentAsync
+let defaultProps = {appState: new AppState(), componentState: new ComponentState()}
 
 export const createRoutes: StatelessComponent<{history: History.History}> = (props) => (
   <Router history={props.history}>
     <Route path="/" component={CoreLayout}>
       {/*{console.log(Home)}*/}
-      <IndexRoute getComponent={load(require('bundle?lazy!./Home'))} />
-      <Route path="counter" getComponent={load(require('bundle?lazy!./Counter'))} />
+      <IndexRoute getComponent={load(require('bundle?lazy!./Home/Home'))} />
+      <Route path="counter" getComponent={load(require('bundle?lazy!./Counter'), defaultProps)} />
       {/*<Route path="users" component={Users}>*/}
         {/*<Route path="/user/:userId" component={User}/>*/}
       {/*</Route>*/}

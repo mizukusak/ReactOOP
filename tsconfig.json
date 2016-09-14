@@ -7,18 +7,36 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "jsx": "react",
-    "noEmitHelpers": false,
+    "noEmitHelpers": false,     // occur ambiguous error if this is true
     "strictNullChecks": false,
     "noImplicitThis": true,
+    "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
+    "skipLibCheck": true,   // checking for *.d.ts
     "baseUrl": "./src",
     "outDir": "./dist",
     "paths": [
     ],
     "lib": [
       "dom",
-      "es6"
+      "webworker",
+      "es2015",
+      "es2015.core",
+      "es2015.collection",
+      "es2015.iterable",
+      "es2015.promise",
+      "es2015.proxy",
+      "es2015.reflect",
+      "es2015.generator",
+      "es2015.symbol",
+      "es2015.symbol.wellknown",
+      "es2016",
+      "es2016.array.include",
+      "es2017",
+      "es2017.object",
+      "es2017.sharedmemory",
+      "scripthost"
     ],
     "types": [
       "core-js",
@@ -44,3 +62,4 @@
   "buildOnSave": false,
   "atom": { "rewriteTsconfig": false }
 }
+

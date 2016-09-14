@@ -20,7 +20,7 @@ const webpackConfig = {
   target: 'web',
   resolve: {
     root: paths.client(),
-    extensions: ['', '.js', '.ts', '.styl', '.jsx', '.tsx', '.json']
+    extensions: ['', '.js', '.ts', '.jsx', '.tsx', '.json']
   },
   module: {}
 }
@@ -219,12 +219,22 @@ if (isUsingCSSModules) {
 
   webpackConfig.module.loaders.push(
     {
+      test: /\.styl$/,
+      include: cssModulesRegex,
+      loaders: [
+        'style',
+        cssModulesLoader,
+        // 'postcss',
+        'stylus?sourceMap'
+      ]
+    },
+    {
       test: /\.scss$/,
       include: cssModulesRegex,
       loaders: [
         'style',
         cssModulesLoader,
-        'postcss',
+        // 'postcss',
         'sass?sourceMap'
       ]
     },
@@ -234,7 +244,7 @@ if (isUsingCSSModules) {
       loaders: [
         'style',
         cssModulesLoader,
-        'postcss'
+        // 'postcss'
       ]
     }
   )
@@ -249,7 +259,7 @@ webpackConfig.module.loaders.push(
     loaders: [
       'style',
       BASE_CSS_LOADER,
-      'postcss',
+      // 'postcss',
       'stylus?sourceMap'
     ]
   },
@@ -259,7 +269,7 @@ webpackConfig.module.loaders.push(
     loaders: [
       'style',
       BASE_CSS_LOADER,
-      'postcss',
+      // 'postcss',
       'sass?sourceMap'
     ]
   },
@@ -269,7 +279,7 @@ webpackConfig.module.loaders.push(
     loaders: [
       'style',
       BASE_CSS_LOADER,
-      'postcss'
+      // 'postcss'
     ]
   }
 )
@@ -308,7 +318,7 @@ webpackConfig.module.loaders.push(
   { test: /\.ttf(\?.*)?$/,   loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
   { test: /\.eot(\?.*)?$/,   loader: 'file?prefix=fonts/&name=[path][name].[ext]' },
   { test: /\.svg(\?.*)?$/,   loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-  { test: /\.(png|jpg)$/,    loader: 'url?limit=8192' }
+  { test: /\.(png|jpg|gif)$/,    loader: 'file?prefix=img/&name=[path][name].[ext]' }
 )
 /* eslint-enable */
 
